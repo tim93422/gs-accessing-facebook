@@ -23,11 +23,16 @@ public class HelloController {
 
     @RequestMapping(method=RequestMethod.GET)
     public String helloFacebook(Model model) {
-        if (!facebook.isAuthorized()) {
+        try {        
+            if (!facebook.isAuthorized()) {
+                return "redirect:/connect/facebook";
+            }
+        } catch (NullPointerException npe) {
             return "redirect:/connect/facebook";
         }
 
-        model.addAttribute(facebook.userOperations().getUserProfile());
+        model.addAttribute("facebookProfile", 
+            facebook.userOperations().getUserProfile());
         PagedList<Post> homeFeed = facebook.feedOperations().getHomeFeed();
         model.addAttribute("feed", homeFeed);
 
